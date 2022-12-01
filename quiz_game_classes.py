@@ -1,12 +1,15 @@
 #!/usr/bin/python3
+from random import shuffle
+import html
 
 class Question:
     """
         Class for a question object
     """
-    def __init__(self, question, answer):
+    def __init__(self, question, answer, incorrect_answers):
         self.question = question
         self.answer = answer
+        self.incorrect_answers = incorrect_answers
 
 class QuizBrain:
     """
@@ -20,13 +23,15 @@ class QuizBrain:
         """
             Generates question
         """
-        q_l = self.question_list
-        q_n = self.question_number
-        q_u = q_l[q_n].question
-        a = q_l[q_n].answer
-
-        p_a = input(f"{q_n + 1}: {q_u}\n")
-        self.check_answer(p_a, a)
+        question = html.unescape(self.question_list[self.question_number].question)
+        answer = self.question_list[self.question_number].answer
+        incorrect_answers = self.question_list[self.question_number].incorrect_answers
+        incorrect_answers.append(answer)
+        shuffle(incorrect_answers)
+        possibilities = ', '.join(incorrect_answers)
+        player_answer = input(f"{self.question_number + 1}: {question}"
+                              f" ({possibilities})\n")
+        self.check_answer(player_answer, answer)
         self.question_number += 1
 
     def still_has_questions(self):
